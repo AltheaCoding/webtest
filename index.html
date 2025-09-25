@@ -1,1 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="https://github.com/AltheaCoding/image-hosting/blob/main/QRARicon.png?raw=true" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QRAR Lost & Found Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel to transpile JSX in the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      // De-structure React hooks for convenience
+      const { useState } = React;
+
+      // --- From components/Icons.tsx ---
+      const ShieldCheckIcon = ({ className }) => (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 24 24" 
+          fill="currentColor" 
+          className={`w-5 h-5 ${className}`}
+        >
+          <path fillRule="evenodd" d="M12 1.5a.75.75 0 01.75.75v1.511c.75.113 1.47.365 2.164.739a.75.75 0 01-.288 1.423A6.743 6.743 0 0012 5.25a6.743 6.743 0 00-2.625.923.75.75 0 01-.288-1.423 8.22 8.22 0 012.164-.74V2.25A.75.75 0 0112 1.5zm-3.834 6.012a.75.75 0 011.06 0l1.244 1.243 2.2-2.201a.75.75 0 011.062 1.06l-2.75 2.75a.75.75 0 01-1.06 0L8.166 9.632a.75.75 0 010-1.06z" clipRule="evenodd" />
+          <path d="M3.283 8.943c.095-.246.223-.483.374-.707l.001-.002 4.474-6.102a.75.75 0 011.23.906L5.34 9.402a.75.75 0 01-1.23-.906l-.002.002c-.08-.108-.155-.219-.224-.332a5.25 5.25 0 00-5.83-8.683.75.75 0 01-.58 1.353 6.75 6.75 0 017.514 11.086 44.92 44.92 0 01.488 1.493.75.75 0 11-1.423.493 46.409 46.409 0 00-.47-1.442l-.003-.007a5.25 5.25 0 00-6.815-9.45zM20.717 8.943c-.095-.246-.223-.483-.374-.707l-.001-.002-4.474-6.102a.75.75 0 00-1.23.906L18.66 9.402a.75.75 0 001.23-.906l.002.002c.08-.108.155-.219.224-.332a5.25 5.25 0 015.83-8.683.75.75 0 00.58 1.353 6.75 6.75 0 00-7.514 11.086 44.92 44.92 0 00-.488 1.493.75.75 0 101.423.493 46.409 46.409 0 01.47-1.442l.003-.007a5.25 5.25 0 016.815-9.45z" />
+        </svg>
+      );
+
+      const CloseIcon = ({ className }) => (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          strokeWidth={1.5} 
+          stroke="currentColor" 
+          className={`w-6 h-6 ${className}`}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      );
+
+      const ChevronDownIcon = ({ className }) => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className={`w-6 h-6 ${className}`}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      );
+
+      // --- From components/Buttons.tsx ---
+      const PrimaryButton = ({ children, ...props }) => {
+        return (
+          <button
+            {...props}
+            className="w-full flex items-center justify-center gap-3 bg-[#1C2D4A] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#2a4268] focus:outline-none focus:ring-4 focus:ring-[#1C2D4A]/50 transition-all duration-300 ease-in-out transform hover:scale-105"
+          >
+            {children}
+          </button>
+        );
+      };
+
+      const SecondaryButton = ({ children, ...props }) => {
+        return (
+          <button
+            {...props}
+            className="w-full flex items-center justify-center gap-2 bg-white text-[#1C2D4A] font-semibold py-3 px-4 rounded-lg border border-[#1C2D4A] hover:bg-[#1C2D4A]/10 focus:outline-none focus:ring-4 focus:ring-[#1C2D4A]/50 transition-colors duration-300"
+          >
+            {children}
+          </button>
+        );
+      };
+
+      // --- From components/ContactModal.tsx ---
+      const ContactModal = ({ isOpen, onClose }) => {
+        if (!isOpen) return null;
+
+        return (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 transition-opacity duration-300"
+            onClick={onClose}
+          >
+            <div 
+              className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 md:p-8 space-y-6 relative transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale"
+              onClick={(e) => e.stopPropagation()}
+              style={{ animation: 'fade-in-scale 0.3s forwards' }}
+            >
+              <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 transition-colors">
+                <CloseIcon />
+              </button>
+
+              <header className="text-center">
+                <h2 className="text-2xl font-bold text-slate-900">其他聯絡方式</h2>
+                <p className="text-slate-600 mt-2">請透過以下方式留下您的訊息。</p>
+              </header>
+
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div>
+                  <label htmlFor="contact-method" className="block text-sm font-medium text-slate-700 mb-1">聯絡方式 (可選)</label>
+                  <input 
+                    type="text" 
+                    id="contact-method"
+                    placeholder="例如：Email 或 其他通訊軟體"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-[#1C2D4A] focus:border-[#1C2D4A] transition"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1">您的訊息</label>
+                  <textarea 
+                    id="message" 
+                    rows={4}
+                    placeholder="請在此輸入您想傳達給失主的訊息..."
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-[#1C2D4A] focus:border-[#1C2D4A] transition"
+                    required
+                  ></textarea>
+                </div>
+                <PrimaryButton onClick={() => { alert('Message sent!'); onClose(); }}>
+                  傳送匿名訊息
+                </PrimaryButton>
+              </form>
+
+              <p className="text-xs text-center text-slate-500">
+                您的聯絡方式將被加密處理，僅用於本次協尋聯繫。
+              </p>
+
+              <style>{`
+                @keyframes fade-in-scale {
+                  from {
+                    transform: scale(0.95);
+                    opacity: 0;
+                  }
+                  to {
+                    transform: scale(1);
+                    opacity: 1;
+                  }
+                }
+              `}</style>
+            </div>
+          </div>
+        );
+      };
+
+      // --- From components/FAQ.tsx ---
+      const faqData = [
+        {
+          question: 'Q1：如果我趕時間，或失主沒有馬上回覆我怎麼辦？',
+          answer: 'A：我們完全理解。最好的做法是，您可以先將失物或孩童帶至附近最方便的警察局、捷運站或連鎖超商的服務台暫時安置，然後再透過本系統留言告知失主您放置的確切地點。您的幫助依然非常重要！'
+        },
+        {
+          question: 'Q2：為什麼建議使用 LINE 聯繫？',
+          answer: 'A：在台灣，Line是最多人使用的通訊軟體。使用 LINE 是最即時、最方便的方式。您可以快速傳送當下的 GPS 地點，這對焦急的失主來說是極有價值的資訊。同樣地，整個過程是完全匿名的，您的 LINE 隱私會受到完整的保護。'
+        },
+        {
+          question: 'Q3：如果失主提出不合理的要求（例如要我把東西送到很遠的地方）怎麼辦？',
+          answer: 'A：請以您自身的安全與方便為最高原則。您沒有義務滿足任何不合理的要求。將物品交由公正的第三方（如警察局）是我們最推薦的安全作法。'
+        },
+        {
+          question: 'Q4：這是什麼？我為什麼應該信任這個網站？',
+          answer: 'A：這是 QRAR 安心找回中心的官方協尋頁面。我們是一個專注於協尋失物與走散親友的安全平台。所有訊息都會以匿名、加密的方式轉達給失主，我們也絕不會向您索取個資或金融資訊，請您安心'
+        },
+      ];
+
+      const FAQItem = ({ item, isOpen, onClick }) => {
+        return (
+          <div className="border-b border-slate-200 last:border-b-0">
+            <button 
+              onClick={onClick} 
+              className="w-full flex justify-between items-center text-left font-semibold text-slate-800 hover:text-[#1C2D4A] py-4 focus:outline-none transition-colors"
+              aria-expanded={isOpen}
+            >
+              <span className="pr-4">{item.question}</span>
+              <ChevronDownIcon className={`w-5 h-5 text-slate-500 flex-shrink-0 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-screen pb-4' : 'max-h-0'}`}>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                {item.answer}
+              </p>
+            </div>
+          </div>
+        );
+      };
+
+      const FAQ = () => {
+        const [activeIndex, setActiveIndex] = useState(null);
+
+        const handleToggle = (index) => {
+          setActiveIndex(activeIndex === index ? null : index);
+        };
+
+        return (
+          <section className="pt-4 border-t border-slate-200">
+            <h2 className="text-xl font-bold text-slate-900 mb-2 text-center">Q&A</h2>
+            <div>
+              {faqData.map((item, index) => (
+                <FAQItem 
+                  key={index}
+                  item={item}
+                  isOpen={activeIndex === index}
+                  onClick={() => handleToggle(index)}
+                />
+              ))}
+            </div>
+          </section>
+        );
+      };
+
+      // --- From App.tsx ---
+      const App = () => {
+        const [isModalOpen, setIsModalOpen] = useState(false);
+
+        return (
+          <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+            <main className="bg-white rounded-2xl shadow-lg w-full max-w-md mx-auto overflow-hidden">
+              <div className="text-lg text-center text-white font-semibold bg-[#1C2D4A] py-3">
+                感謝您，熱心的幫忙！
+              </div>
+
+              <div className="p-6 md:p-8 pb-3">
+                <header className="text-center">
+                  <div className="flex items-center justify-center gap-8">
+                    <img 
+                      src="https://github.com/AltheaCoding/image-hosting/blob/main/QRARicon.png?raw=true"
+                      alt="QRAR Logo"
+                      className="w-32 h-32 flex-shrink-0"
+                    />
+                    <div className="text-left">
+                      <h1 className="text-5xl font-bold text-slate-900">qrar.com</h1>
+                      <p className="text-3xl text-slate-600">安心找回中心</p>
+                    </div>
+                  </div>
+                </header>
+              </div>
+              
+              <div className="px-6 md:px-8 pb-6 text-center text-slate-700">
+                  <p>此 QR code 可協助尋找失物或走散親友。</p>
+              </div>
+
+              <img 
+                src="https://github.com/AltheaCoding/image-hosting/blob/main/Google_AI_Studio_2025-09-25T16_23_55.429Z.png?raw=true" 
+                alt="Illustration of a person finding a lost item with a QRAR tag." 
+                className="w-full h-auto" 
+              />
+              
+              <div className="p-6 md:p-8 pt-6 space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <PrimaryButton onClick={() => alert('Redirecting to LINE...')}>
+                      訊息將以 Line 匿名加密 傳送。
+                    </PrimaryButton>
+                    <p className="text-center text-xs text-slate-500 mt-2 px-4">
+                      😊 為感謝您的協助，完成幫助後，<br/>
+                      30天內申請QRcode將贈送您 100 則訊息額度
+                    </p>
+                  </div>
+                  <SecondaryButton onClick={() => setIsModalOpen(true)}>
+                    沒有Line，要留言
+                  </SecondaryButton>
+                </div>
+
+                <footer className="border-t border-slate-200 pt-4 space-y-3 text-xs text-slate-600">
+                  <div className="flex items-start gap-2 bg-[#1C2D4A]/10 border border-[#1C2D4A]/50 text-[#1C2D4A] p-3 rounded-lg">
+                    <ShieldCheckIcon className="w-6 h-6 flex-shrink-0 mt-0.5 text-[#1C2D4A]" />
+                    <div>
+                      <p className="font-bold">安全提醒：請認明 <strong className="text-slate-800">https://qrar.com</strong> 官方網址。</p>
+                      <p>本系統<strong className="text-slate-800">絕不會</strong>向您索取個資、密碼或金融帳戶。有任何疑慮請直撥 165 反詐騙專線。</p>
+                    </div>
+                  </div>
+                </footer>
+                <FAQ />
+              </div>
+            </main>
+            
+            <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+          </div>
+        );
+      };
+      
+      // --- From index.tsx ---
+      const rootElement = document.getElementById('root');
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(<App />);
+
+    </script>
+  </body>
+</html>
 
