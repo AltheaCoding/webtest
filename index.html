@@ -76,11 +76,11 @@
         );
       };
       
-      const SecondaryButton = ({ children, ...props }) => {
+      const SecondaryButton = ({ children, className, ...props }) => {
         return (
           <button
             {...props}
-            className="w-full flex items-center justify-center gap-2 bg-white text-[#1C2D4A] font-semibold py-3 px-4 rounded-lg border border-[#1C2D4A] hover:bg-[#1C2D4A]/10 focus:outline-none focus:ring-4 focus:ring-[#1C2D4A]/50 transition-colors duration-300"
+            className={`w-full flex items-center justify-center gap-2 bg-white text-[#1C2D4A] font-semibold py-3 px-4 rounded-lg border border-[#1C2D4A] hover:bg-[#1C2D4A]/10 focus:outline-none focus:ring-4 focus:ring-[#1C2D4A]/50 transition-colors duration-300 ${className || ''}`}
           >
             {children}
           </button>
@@ -239,29 +239,24 @@
               <div className="text-lg text-center text-white font-semibold bg-[#1C2D4A] py-3">
                 感謝您，熱心的幫忙！
               </div>
+              
+              <div className="p-6 md:p-8 space-y-6">
 
-              <div className="p-6 md:p-8 pb-3">
-                 <header className="text-center mt-8">
-                  <div className="flex items-center justify-center gap-8">
+                <header className="flex justify-center items-center gap-2 mt-12">
                     <img 
-                      src="https://github.com/AltheaCoding/image-hosting/blob/main/QRARicon.png?raw=true"
-                      alt="QRAR Logo"
-                      className="w-32 h-32 flex-shrink-0"
+                        src="https://github.com/AltheaCoding/image-hosting/blob/main/QRARicon.png?raw=true" 
+                        alt="QRAR Logo" 
+                        className="w-36 h-36"
                     />
-                    <div className="text-left">
-                      <h1 className="text-5xl font-bold text-slate-900">qrar.com</h1>
-                      <p className="text-3xl text-slate-600">安心找回中心</p>
+                    <div>
+                        <p className="text-5xl font-bold text-slate-800">qrar.com</p>
+                        <p className="text-4xl text-slate-600 font-bold mt-6">安心找回中心</p>
                     </div>
-                  </div>
                 </header>
-              </div>
               
-              <div className="px-6 md:px-8 pb-6 text-center text-slate-700">
-                  <p>此 QR code 可協助尋找失物或走散親友。</p>
-              </div>
+                <p className="text-center text-slate-700">此 QR code 可協助尋找失物或走散親友。</p>
               
-              <div className="p-6 md:p-8 pt-0 space-y-6">
-                <div className="space-y-4">
+                <div className="space-y-4 pt-12">
                   <div>
                     <PrimaryButton onClick={() => alert('Redirecting to LINE...')}>
                       訊息將以 Line 匿名加密 傳送。
@@ -271,17 +266,24 @@
                       30天內申請QRcode將贈送您 100 則訊息額度
                     </p>
                   </div>
-                  <SecondaryButton onClick={() => setIsModalOpen(true)}>
+                  <p>
+                  <br>
+                  </br>
+                  <br>
+                  </br>
+                  </p>
+                  <SecondaryButton onClick={() => setIsModalOpen(true)} className="mt-96">
                     沒有Line，要留言
                   </SecondaryButton>
                 </div>
-
-                <footer className="border-t border-slate-200 pt-2.5 space-y-3 text-xs text-slate-600">
-                  <div className="flex items-start gap-2 bg-[#1C2D4A]/10 border border-[#1C2D4A]/50 text-[#1C2D4A] p-3 rounded-lg">
-                    <div>
-                      <p>安全提醒：請認明 https://qrar.com 官方網址。</p>
-                      <p>本系統絕不會向您索取個資、密碼或金融帳戶。有任何疑慮請直撥 165 反詐騙專線。</p>
-                    </div>
+                 <p>
+                  <br>
+                  </br>
+                  </p>
+                <footer className="border-t border-slate-200 pt-4 space-y-3 text-xs mt-12">
+                  <div className="bg-pink-100 border border-pink-400 text-pink-900 p-3 rounded-lg">
+                    <p>安全提醒：請認明 https://qrar.com 官方網址。</p>
+                    <p>本系統絕不會向您索取個資、密碼或金融帳戶。有任何疑慮請直撥 165 反詐騙專線。</p>
                   </div>
                 </footer>
                 <FAQ />
